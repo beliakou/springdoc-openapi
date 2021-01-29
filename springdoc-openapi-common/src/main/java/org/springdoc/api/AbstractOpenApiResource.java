@@ -40,6 +40,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executors;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -572,7 +573,16 @@ public abstract class AbstractOpenApiResource extends SpecFilter {
 	 */
 	protected boolean isFilterCondition(HandlerMethod handlerMethod, String operationPath, String[] produces, String[] consumes, String[] headers) {
 		return isPackageToScan(handlerMethod.getBeanType().getPackage())
+				&& isCustomFilterCondition(handlerMethod)
 				&& isFilterCondition(operationPath, produces, consumes, headers);
+	}
+
+	protected boolean isCustomFilterCondition(HandlerMethod handlerMethod) {
+		Optional<List<Predicate<HandlerMethod>>> optionalCustomFilter = springDocConfigProperties.getGroupConfigs().stream().filter(groupConfig -> this.groupName.equals(groupConfig.getGroup()))
+				.findAny().map(GroupConfig::getCustomFilters);
+		return optionalCustomFilter
+				.map(predicates -> predicates.stream().allMatch(predicate -> predicate.test(handlerMethod)))
+				.orElse(true);
 	}
 
 	/**

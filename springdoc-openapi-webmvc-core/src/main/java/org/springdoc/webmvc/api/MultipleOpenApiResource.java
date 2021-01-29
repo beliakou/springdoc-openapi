@@ -151,7 +151,7 @@ public abstract class MultipleOpenApiResource implements InitializingBean {
 		this.groupedOpenApiResources = groupedOpenApis.stream()
 				.collect(Collectors.toMap(GroupedOpenApi::getGroup, item ->
 						{
-							GroupConfig groupConfig = new GroupConfig(item.getGroup(), item.getPathsToMatch(), item.getPackagesToScan(), item.getPackagesToExclude(), item.getPathsToExclude(), item.getProducesToMatch(), item.getConsumesToMatch(), item.getHeadersToMatch());
+							GroupConfig groupConfig = new GroupConfig(item.getGroup(), item.getPathsToMatch(), item.getPackagesToScan(), item.getPackagesToExclude(), item.getPathsToExclude(), item.getProducesToMatch(), item.getConsumesToMatch(), item.getHeadersToMatch(), item.getCustomFilters());
 							springDocConfigProperties.addGroupConfig(groupConfig);
 							return buildWebMvcOpenApiResource(item);
 						}

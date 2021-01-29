@@ -24,11 +24,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springdoc.core.customizers.OperationCustomizer;
 
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.method.HandlerMethod;
 
 import static org.springdoc.core.Constants.GROUP_NAME_NOT_NULL;
 
@@ -52,6 +54,9 @@ public class GroupedOpenApi {
 	 * The Operation customizers.
 	 */
 	private final List<OperationCustomizer> operationCustomizers;
+
+
+	private final List<Predicate<HandlerMethod>> customFilters;
 
 	/**
 	 * The Paths to match.
@@ -95,6 +100,7 @@ public class GroupedOpenApi {
 	 */
 	private GroupedOpenApi(Builder builder) {
 		this.group = Objects.requireNonNull(builder.group, GROUP_NAME_NOT_NULL);
+		this.customFilters = builder.customFilters;
 		this.pathsToMatch = builder.pathsToMatch;
 		this.packagesToScan = builder.packagesToScan;
 		this.producesToMatch = builder.producesToMatch;
@@ -123,6 +129,10 @@ public class GroupedOpenApi {
 	 */
 	public static Builder builder() {
 		return new Builder();
+	}
+
+	public List<Predicate<HandlerMethod>> getCustomFilters() {
+		return customFilters;
 	}
 
 	/**
@@ -235,6 +245,8 @@ public class GroupedOpenApi {
 		 */
 		private String group;
 
+		private List<Predicate<HandlerMethod>> customFilters;
+
 		/**
 		 * The Paths to match.
 		 */
@@ -285,6 +297,11 @@ public class GroupedOpenApi {
 		 */
 		public Builder group(String group) {
 			this.group = group;
+			return this;
+		}
+
+		public Builder customFilters(Predicate<HandlerMethod>... customFilters) {
+			this.customFilters = Arrays.asList(customFilters);
 			return this;
 		}
 

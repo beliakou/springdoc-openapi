@@ -22,12 +22,14 @@ package org.springdoc.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
+import org.springframework.web.method.HandlerMethod;
 
 import static org.springdoc.core.Constants.DEFAULT_WEB_JARS_PREFIX_URL;
 import static org.springdoc.core.Constants.SPRINGDOC_ENABLED;
@@ -862,6 +864,8 @@ public class SpringDocConfigProperties {
 	 */
 	public static class GroupConfig {
 
+		private List<Predicate<HandlerMethod>> customFilters;
+
 		/**
 		 * The Paths to match.
 		 */
@@ -922,7 +926,8 @@ public class SpringDocConfigProperties {
 		 */
 		public GroupConfig(String group, List<String> pathsToMatch, List<String> packagesToScan,
 				List<String> packagesToExclude, List<String> pathsToExclude,
-				List<String> producesToMatch,List<String> consumesToMatch,List<String> headersToMatch) {
+				List<String> producesToMatch,List<String> consumesToMatch,List<String> headersToMatch,
+				List<Predicate<HandlerMethod>> customFilters) {
 			this.pathsToMatch = pathsToMatch;
 			this.pathsToExclude = pathsToExclude;
 			this.packagesToExclude = packagesToExclude;
@@ -931,6 +936,16 @@ public class SpringDocConfigProperties {
 			this.producesToMatch = producesToMatch;
 			this.consumesToMatch = consumesToMatch;
 			this.headersToMatch = headersToMatch;
+			this.customFilters = customFilters;
+		}
+
+		public List<Predicate<HandlerMethod>> getCustomFilters() {
+			return customFilters;
+		}
+
+		public void setCustomFilters(
+				List<Predicate<HandlerMethod>> customFilters) {
+			this.customFilters = customFilters;
 		}
 
 		/**
